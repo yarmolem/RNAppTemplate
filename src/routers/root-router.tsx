@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
@@ -17,6 +18,10 @@ const RootRouter = () => {
     isSignout: state.isSignout,
     isAuth: state.user !== null,
   }));
+
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
   return (
     <NavigationContainer ref={navigationRef}>
