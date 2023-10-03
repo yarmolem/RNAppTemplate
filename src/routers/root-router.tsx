@@ -11,6 +11,8 @@ import {navigationRef} from '@/utils/navigate';
 import {useAuthStore} from '@/stores/auth.store';
 
 import type {RootStackParamList} from './root-router.types';
+import AuthStorage from '@/storages/auth.storage';
+import {sleep} from '@/utils/sleep';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,7 +23,32 @@ const RootRouter = () => {
   }));
 
   useEffect(() => {
-    SplashScreen.hide();
+    const bootstrap = async () => {
+      const token = AuthStorage.getToken();
+      const AuthStore = useAuthStore.getState();
+
+      if (!token) {
+        AuthStore.logoutAction();
+        AuthStorage.removeToken();
+        SplashScreen.hide();
+        return;
+      }
+
+      await sleep(500);
+
+      AuthStore.loginAction({
+        id: 1,
+        name: 'John Doe',
+        email: 'john@dev.com',
+        avatar: 'https://i.pravatar.cc/150?img=3',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+
+      SplashScreen.hide();
+    };
+
+    bootstrap();
   }, []);
 
   return (
